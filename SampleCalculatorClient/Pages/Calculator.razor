@@ -1,0 +1,58 @@
+﻿@page "/Calculator"
+@inject HttpClient httpClient;
+
+<div>
+    <h1>Calculator</h1>
+    <input type="number" @bind="@number1" />
+    <input type="number" @bind="@number2" />
+    <button @onclick="Add">Add</button>
+    <button @onclick="Subtract">Subtract</button>
+    <button @onclick="Multiply">Multiply</button>
+    <button @onclick="Division">Division</button>
+    <h3>Result: @result</h3>
+    <p>@error</p>
+</div>
+
+@code {
+    private double number1, number2, result;
+    private string error, operation;
+
+    private async void Add()
+    {
+        operation = "add";
+        await Calculate();
+    }
+
+    private async void Subtract()
+    {
+        operation = "subtract";
+        await Calculate();
+    }
+
+    private async void Multiply()
+    {
+        operation = "multiply";
+        await Calculate();
+    }
+
+    private async void Division()
+    {
+        operation = "division";
+        await Calculate();
+    }
+
+    public async Task Calculate()
+    {
+        if (number2 == 0 && operation == "division")
+        {
+            error = "Second number should be greater than 0.";
+            result = 0;
+        }
+        else
+        {
+            result = await httpClient.GetFromJsonAsync<double>($"/api/calculator/{operation}/{number1}/{number2}");
+            error = string.Empty;
+        }
+        StateHasChanged();
+    }
+}
